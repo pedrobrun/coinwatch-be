@@ -1,7 +1,8 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import userRouter from './domains/user/UserController';
-import { prismaClient } from './db';
+import prismaClient from './db';
+import coinRouter from './domains/coins/CoinController';
 
 dotenv.config();
 
@@ -13,7 +14,7 @@ async function main() {
   app.use(express.json());
 
   app.get('/', (req, res) => {
-    res.send('Coinwatch - base url');
+    res.send('Welcome to Coinwatch API');
   });
 
   await prismaClient.$connect();
@@ -26,6 +27,7 @@ async function main() {
 
   // routes
   app.use('/user', userRouter);
+  app.use('/coin', coinRouter);
 }
 
 main();
