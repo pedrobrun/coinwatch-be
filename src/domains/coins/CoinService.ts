@@ -8,10 +8,10 @@ export class CoinService {
   }
 
   public async addToFavouriteCoins(coin: any, username: string) {
-    const found = await userService.findByUsername(username);
+    const foundUser = await userService.findByUsername(username);
 
-    if (!found) throw Error("Username doesn't exist.");
+    if (!foundUser) throw Error("Username doesn't exist.");
 
-    this.coinRepository.addToFavouriteCoins(coin, found);
+    return this.coinRepository.addToFavouriteCoins(coin, foundUser);
   }
 }
