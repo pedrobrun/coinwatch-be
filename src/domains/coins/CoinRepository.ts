@@ -1,4 +1,4 @@
-import { prisma, User } from '@prisma/client';
+import { User } from '@prisma/client';
 import { Context } from '../../context';
 import { ICoinRepository } from './ICoinRepository';
 
