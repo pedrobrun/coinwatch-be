@@ -63,7 +63,14 @@ userRouter.post('/login', async (req: Request, res: Response) => {
       return res.send('Something went wrong');
     }
 
-    return res.status(200).send({ token: token });
+    return res
+      .cookie('jwt', token, {
+        sameSite: true,
+        httpOnly: true,
+        maxAge: 7200,
+      })
+      .status(200)
+      .send({ token: token });
   } catch (e: any) {
     return res.send(e.message);
   }
