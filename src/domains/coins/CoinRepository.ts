@@ -9,6 +9,11 @@ export class CoinRepository implements ICoinRepository {
   }
 
   public async addToFavouriteCoins(coin: any, user: User) {
+    const exists = user.favouriteCoins.find((c) => (c as any).id === coin.id);
+    if (exists) {
+      throw Error('Already favourite.');
+    }
+
     user.favouriteCoins.push(coin);
 
     // TODO: check for already added coin
