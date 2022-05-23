@@ -7,7 +7,7 @@ const userRouter = express.Router();
 
 const userRepository = new UserRepository({ prisma: prismaClient });
 
-const userService = new UserService(userRepository);
+export const userService = new UserService(userRepository);
 
 userRouter.get('/', async (req: Request, res: Response) => {
   const users = await userService.getAll();
@@ -34,14 +34,38 @@ userRouter.post('/register', async (req: Request, res: Response) => {
 
   try {
     const user = await userService.registerUser(username, password);
-    console.log(user);
+
     if (!user) {
       return res.status(500).send('Something went wrong');
     }
 
     return res.status(200).send('User created.');
   } catch (e: any) {
-    return res.status(500).json(e.message);
+    return res.send(e.message);
+  }
+});
+
+userRouter.post('/login', async (req: Request, res: Response) => {
+  const { username, password } = req.body;
+
+  if (!username) {
+    return res.status(404).send('No username provided');
+  }
+
+  if (!password) {
+    return res.status(404).send('No password provided');
+  }
+
+  try {
+    const token = await userService.authUser(username, password);
+
+    if (!token) {
+      return res.send('Something went wrong');
+    }
+
+    return res.status(200).send({ token: token });
+  } catch (e: any) {
+    return res.send(e.message);
   }
 });
 

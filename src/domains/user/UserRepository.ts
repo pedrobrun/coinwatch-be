@@ -1,7 +1,12 @@
-import { hash, genSalt, compare } from 'bcrypt';
+import { compare } from 'bcrypt';
 import { IUserRepository } from './IUserRepository';
 import { User } from '@prisma/client';
 import { Context } from '../../context';
+
+interface UserPayload {
+  username: string;
+  password: string;
+}
 
 export class UserRepository implements IUserRepository {
   context: Context;
@@ -18,13 +23,6 @@ export class UserRepository implements IUserRepository {
   }
 
   public async registerUser(username: string, password: string) {
-    const existing = await this.findByUsername(username);
-    if (existing) throw Error('Username already in use.');
-
-    const salt = await genSalt(12);
-
-    password = await hash(password, salt);
-
     const created = await this.context.prisma.user.create({
       data: {
         username: username,
@@ -35,14 +33,8 @@ export class UserRepository implements IUserRepository {
     return created;
   }
 
-  public async authUser(user: User) {
-    const existing = await this.findByUsername(user.username);
-
-    if (!existing) throw Error("User doesn't exist");
-
-    const checkPassword = await compare(user.password, existing.password);
-
-    if (!checkPassword) throw 'Wrong password';
+  public async authUser(userToAuth: UserPayload, userFound: User) {
+    return compare(userToAuth.password, userFound.password);
   }
 
   public async getAll() {
