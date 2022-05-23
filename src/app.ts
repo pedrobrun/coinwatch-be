@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import userRouter from './domains/user/UserController';
 import prismaClient from './db';
 import coinRouter from './domains/coins/CoinController';
+import cors from 'cors';
 
 dotenv.config();
 
@@ -12,6 +13,7 @@ const app = express();
 
 async function main() {
   app.use(express.json());
+  app.use(cors());
 
   app.get('/', (req, res) => {
     res.send('Welcome to Coinwatch API');
