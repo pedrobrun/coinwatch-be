@@ -1,6 +1,7 @@
 import express, { Request, Response } from 'express';
 import prismaClient from '../../db';
 import { authMiddleware } from '../../middlewares/jwtMiddleware';
+import { userService } from '../user/UserController';
 import { CoinRepository } from './CoinRepository';
 import { CoinService } from './CoinService';
 
@@ -24,5 +25,25 @@ coinRouter.post('/', authMiddleware, async (req: Request, res: Response) => {
     res.send(e.message);
   }
 });
+
+coinRouter.get(
+  '/myCoins',
+  authMiddleware,
+  async (req: Request, res: Response) => {
+    const { username } = req.body;
+
+    if (!username) res.send('Not authenticated');
+
+    try {
+      const user = await userService.findByUsername(username);
+
+      res.status(200).send({
+        myCoins: user?.favouriteCoins,
+      });
+    } catch (e: any) {
+      res.send(e.message);
+    }
+  }
+);
 
 export default coinRouter;
