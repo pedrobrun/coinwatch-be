@@ -66,11 +66,18 @@ userRouter.post('/login', async (req: Request, res: Response) => {
     return res
       .cookie('jwt', token, {
         sameSite: true,
-        httpOnly: true,
-        maxAge: 7200,
+        httpOnly: false,
+        maxAge: 3600000,
+        path: '/',
       })
-      .status(200)
-      .send({ token: token });
+      .cookie('username', username, {
+        sameSite: true,
+        httpOnly: false,
+        maxAge: 3600000,
+        path: '/',
+      })
+      .send('Successfully logged in.')
+      .status(200);
   } catch (e: any) {
     return res.send(e.message);
   }
